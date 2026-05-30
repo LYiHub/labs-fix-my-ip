@@ -18,6 +18,43 @@ function Test-Administrator {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
+function Join-ProcessArguments {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    return (($Arguments | ForEach-Object {
+        if ($_ -match '[\s"]') {
+            '"' + ($_ -replace '"', '\"') + '"'
+        }
+        else {
+            $_
+        }
+    }) -join " ")
+}
+
+function Restart-AsAdministrator {
+    if ([string]::IsNullOrWhiteSpace($PSCommandPath)) {
+        throw "This script must be saved to a .ps1 file before it can request administrator permission."
+    }
+
+    $arguments = Join-ProcessArguments -Arguments @(
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-NoExit",
+        "-File", $PSCommandPath,
+        $Mode,
+        "-Gateway", $Gateway,
+        "-Dns", $Dns,
+        "-StateDirectory", $StateDirectory
+    )
+
+    Write-Host "Requesting administrator permission..."
+    Start-Process -FilePath "powershell.exe" -Verb RunAs -ArgumentList $arguments
+    exit
+}
+
 function Convert-PrefixLengthToSubnetMask {
     param(
         [Parameter(Mandatory = $true)]
@@ -154,7 +191,7 @@ function Restore-NetworkSettings {
 }
 
 if (-not (Test-Administrator)) {
-    throw "This script must be run from an elevated PowerShell session."
+    Restart-AsAdministrator
 }
 
 switch ($Mode) {

@@ -25,7 +25,7 @@ sudo ./fix-ip-macos.sh restore
 
 ## Windows
 
-请用“以管理员身份运行”的 PowerShell 执行：
+请用 PowerShell 执行。脚本需要管理员权限；如果当前 PowerShell 不是管理员，会自动弹出 UAC 提权窗口。
 
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass
