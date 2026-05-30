@@ -38,7 +38,21 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\fix-ip-windows.ps1 restore
 ```
 
+也可以直接从 GitHub Raw 下载后执行：
+
+```powershell
+$u="https://raw.githubusercontent.com/LYiHub/labs-fix-my-ip/refs/heads/main/fix-ip-windows.ps1"; $d="$env:ProgramData\FixMyIP"; New-Item -ItemType Directory -Path $d -Force | Out-Null; $p=Join-Path $d "fix-ip-windows.ps1"; Invoke-WebRequest -UseBasicParsing -Uri $u -OutFile $p; powershell.exe -NoProfile -ExecutionPolicy Bypass -File $p apply
+```
+
+网络调用后的还原建议使用已经下载到本地的副本：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$env:ProgramData\FixMyIP\fix-ip-windows.ps1" restore
+```
+
 脚本会处理当前已连接、启用且有 IPv4 地址的物理网卡，包括 Wi-Fi 和有线网卡，并把本次处理过的网卡记录到 `C:\ProgramData\FixMyIP\target-adapters.txt`。
+
+注意：上面的 Raw URL 指向 `main` 分支，后续 `main` 更新后下载到的脚本也会随之变化。正式分发时可以改用固定 commit hash 的 Raw URL。
 
 ## 自定义网关或 DNS
 
