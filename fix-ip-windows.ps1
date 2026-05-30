@@ -78,7 +78,7 @@ function Invoke-Netsh {
     & netsh @Arguments
 
     if ($LASTEXITCODE -ne 0) {
-        throw "netsh failed with exit code $LASTEXITCODE: netsh $($Arguments -join ' ')"
+        throw "netsh failed with exit code ${LASTEXITCODE}: netsh $($Arguments -join ' ')"
     }
 }
 
@@ -131,11 +131,11 @@ function Restore-NetworkSettings {
         $adapter = Get-NetAdapter -Name $adapterName -ErrorAction SilentlyContinue
 
         if ($null -eq $adapter) {
-            Write-Warning "Skip $adapterName: adapter not found."
+            Write-Warning "Skip ${adapterName}: adapter not found."
             continue
         }
 
-        Write-Host "Restore $adapterName: DHCP address, automatic DNS."
+        Write-Host "Restore ${adapterName}: DHCP address, automatic DNS."
 
         Invoke-Netsh -Arguments @(
             "interface", "ipv4", "set", "address",
